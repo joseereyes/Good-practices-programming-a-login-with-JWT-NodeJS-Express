@@ -16,6 +16,21 @@ module.exports = {
 
     },
 
+    async getUser(req, res) {
 
+        const id = req.params.id;
+
+
+        const response = await model.getUser(id);
+        res.json(response);
+
+    },
+
+    async login(req, res) {
+
+        const response = await model.login(req.body);
+        res.json(response);
+
+    }
 
 }

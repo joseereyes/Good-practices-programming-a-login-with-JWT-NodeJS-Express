@@ -5,11 +5,11 @@ module.exports = {
 
     async createUser(user) {
 
-        const userValidation = await validation.register(user);
+        const postValidation = await validation.register(user); // validates that all fields are correctly sent from frontend.
 
-        if (userValidation) {
+        if (postValidation) {
 
-            return userValidation;
+            return postValidation;
 
         } else {
 
@@ -21,6 +21,36 @@ module.exports = {
 
         const response = await dao.getUsers();
         return response;
+    },
+    async getUser(id) {
+
+        const response = await dao.getUser(id);
+        return response;
+
+    },
+    async login(user) {
+
+        const postValidation = await validation.login(user);
+
+        if (postValidation) {
+
+            return postValidation;
+
+        } else {
+
+            try {
+
+                const response = dao.login(user);
+                return response;
+
+            } catch (error) {
+
+                return error;
+
+            }
+
+        }
+
     }
 
 }

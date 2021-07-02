@@ -1,5 +1,7 @@
 const Joi = require("@hapi/joi");
 
+const schema = require("../schema");
+
 
 module.exports = {
 
@@ -15,14 +17,36 @@ module.exports = {
 
         const response = await schema.validate(user);
 
-        if (!response.error) {
-            return false;
-        } else {
+        if (response.error) {
 
             return response.error.message;
+
+        } else {
+
+            return false;
         }
 
 
+    },
+
+    async login(user) {
+
+        const schema = Joi.object().keys({
+
+            email: Joi.string().min(6).required().email(),
+            password: Joi.string().min(6).required(),
+        });
+
+        const response = await schema.validate(user);
+
+        if (response.error) {
+
+            return response.error.message;
+
+        } else {
+
+            return false;
+        }
     }
 
 
