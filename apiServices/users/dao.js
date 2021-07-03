@@ -45,7 +45,7 @@ module.exports = {
 
         try {
 
-            const response = await userSchema.findOne();
+            const response = await userSchema.find();
             return response;
 
         } catch (error) {
@@ -59,7 +59,6 @@ module.exports = {
     async getUser(id) {
 
         try {
-
             const response = await userSchema.findById({ _id: id });
             return response;
         } catch (error) {
