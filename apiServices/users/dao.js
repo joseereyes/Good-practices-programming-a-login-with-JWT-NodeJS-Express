@@ -1,29 +1,43 @@
 const userSchema = require("./schema");
-const hash = require("./helpers/hashPassword");
+const hash = require("./helpers/hash");
 
 
 module.exports = {
 
     async createUser(user) {
 
-        const hashedPassword = await hash.password(user.password);
+        // true: return all the info asociated with the email, false: does not exist email.
+        const emailExists = await userSchema.findOne({ email: user.email });
 
-        const post = new userSchema({
+        if (emailExists) {
 
-            name: user.name,
-            email: user.email,
-            password: hashedPassword
+            return "Email already exists";
 
-        });
+        } else {
 
-        try {
+            const hashedPassword = await hash.password(user.password);
 
-            const response = await post.save();
-            return response;
+            const post = new userSchema({
 
-        } catch (error) {
-            return error;
+                name: user.name,
+                email: user.email,
+                password: hashedPassword
+
+            });
+
+            try {
+
+                const response = await post.save();
+                return response;
+
+            } catch (error) {
+
+                return error;
+            }
+
         }
+
+
 
     },
 
@@ -53,19 +67,33 @@ module.exports = {
             return error;
         }
     },
+
     async login(user) {
 
-        const dbInfo = await userSchema.findOne({ email: user.email });
+        // true: return all the info asociated with the email, false: does not exist email.
+        const emailExists = await userSchema.findOne({ email: user.email });
 
-        try {
+        if (emailExists) {
 
-            const response = await hash.validatePassword(user.password, dbInfo.password);
-            return response;
+            // now verify the password
 
-        } catch (error) {
-            return error;
+            const verifyPassword = await hash.validatePassword(user.password, emailExists.password);
+
+            if (verifyPassword) {
+
+                return emailExists;
+            } else {
+
+                return "Password does not mach";
+            }
+
+        } else {
+
+            return "Email does not exists";
+
         }
 
 
     }
+
 }

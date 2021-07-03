@@ -1,4 +1,5 @@
 const model = require("./model");
+const jwt = require("../../middlewares/jwt");
 
 
 module.exports = {
@@ -28,8 +29,23 @@ module.exports = {
 
     async login(req, res) {
 
-        const response = await model.login(req.body);
-        res.json(response);
+        const user = await model.login(req.body); //user come with all validations 
+
+        if (user._id) { //if user.id exists it means that DB found the user or password maches.
+
+            const response = await jwt.createToken(req, res, user);
+            res.json(response);
+
+        } else {
+
+            res.json(user);
+
+        }
+    },
+
+    async post(req, res) {
+
+        res.status(200).json(req.user);
 
     }
 

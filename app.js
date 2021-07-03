@@ -2,6 +2,7 @@ const express = require("express");
 const app = express();
 const router = require("./router/router");
 const conf = require("./config/default");
+require("dotenv/config");
 
 
 

@@ -1,18 +1,18 @@
 const dao = require("./dao");
-const validation = require("./helpers/validator");
+const validation = require("./helpers/postValidation");
+
 
 module.exports = {
 
     async createUser(user) {
 
-        const postValidation = await validation.register(user); // validates that all fields are correctly sent from frontend.
+        const postFieldsErr = await validation.register(user); // validates that all fields are correctly sent from frontend.
 
-        if (postValidation) {
+        if (postFieldsErr) {
 
-            return postValidation;
+            return postFieldsErr;
 
         } else {
-
             const response = await dao.createUser(user);
             return response;
         }
@@ -30,7 +30,7 @@ module.exports = {
     },
     async login(user) {
 
-        const postValidation = await validation.login(user);
+        const postValidation = await validation.login(user); // returns true if post.values have error and false if does not exists error
 
         if (postValidation) {
 
@@ -38,16 +38,9 @@ module.exports = {
 
         } else {
 
-            try {
-
-                const response = dao.login(user);
-                return response;
-
-            } catch (error) {
-
-                return error;
-
-            }
+            //response will get the user from DB or a response with email error o password error;
+            const response = await dao.login(user);
+            return response;
 
         }
 
