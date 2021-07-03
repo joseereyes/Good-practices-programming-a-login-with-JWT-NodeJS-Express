@@ -2,8 +2,8 @@ const router = require("express").Router();
 const controllerUser = require("./controller");
 const jwt = require("../../middlewares/jwt");
 
-router.get("/", controllerUser.getUsers);
-router.get("/:id", controllerUser.getUser);
+router.get("/", jwt.validateToken, controllerUser.getUsers);
+router.get("/:id", jwt.validateToken, controllerUser.getUser);
 
 
 router.post("/register", controllerUser.createUser);
