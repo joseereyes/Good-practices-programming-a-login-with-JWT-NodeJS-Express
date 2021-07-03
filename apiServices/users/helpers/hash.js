@@ -1,58 +1,33 @@
 const bcrypt = require("bcrypt");
 
 
+const password = async(password) => {
 
-module.exports = {
+    const saltRounds = 10;
+    const salt = await bcrypt.genSalt(saltRounds);
 
-    async password(password) {
+    try {
 
-        const saltRounds = 10;
-        const salt = await bcrypt.genSalt(saltRounds);
-
-        try {
-
-            const response = await bcrypt.hash(password, salt);
-            return response;
-        } catch (error) {
-            return error;
-        }
-
-    },
-
-    async validatePassword(password, hash) {
-
-        try {
-
-            const response = await bcrypt.compare(password, hash);
-            return response;
-
-        } catch (error) {
-
-            return error;
-        }
-
+        const response = await bcrypt.hash(password, salt);
+        return response;
+    } catch (error) {
+        return error;
     }
-
 
 }
 
+const validatePassword = async(password, hash) => {
 
-// const someOtherPlaintextPassword = 'not_bacon';
+    try {
 
+        const response = await bcrypt.compare(password, hash);
+        return response;
 
-// bcrypt.genSalt(saltRounds, function(err, salt) {
+    } catch (error) {
 
-//     bcrypt.hash(myPlaintextPassword, salt, function(err, hash) {
-//         // Store hash in your password DB.
-//     });
+        return error;
+    }
 
-// });
+}
 
-
-// // Load hash from your password DB.
-// bcrypt.compare(myPlaintextPassword, hash, function(err, result) {
-//     // result == true
-// });
-// bcrypt.compare(someOtherPlaintextPassword, hash, function(err, result) {
-//     // result == false
-// });
+module.exports = { password, validatePassword }

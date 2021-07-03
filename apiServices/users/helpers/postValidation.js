@@ -2,51 +2,48 @@ const Joi = require("@hapi/joi");
 const schema = require("../schema");
 
 
-module.exports = {
+const register = async(user) => {
 
-    async register(user) {
+    const schema = Joi.object().keys({
 
-        const schema = Joi.object().keys({
+        name: Joi.string().min(6).required(),
+        email: Joi.string().min(6).required().email().max(50),
+        password: Joi.string().min(6).required()
 
-            name: Joi.string().min(6).required(),
-            email: Joi.string().min(6).required().email().max(50),
-            password: Joi.string().min(6).required()
+    });
 
-        });
+    const response = await schema.validate(user);
 
-        const response = await schema.validate(user);
+    if (response.error) {
 
-        if (response.error) {
+        return response.error.message;
 
-            return response.error.message;
+    } else {
 
-        } else {
-
-            return false;
-        }
-
-
-    },
-
-    async login(user) {
-
-        const schema = Joi.object().keys({
-
-            email: Joi.string().min(6).required().email(),
-            password: Joi.string().min(6).required(),
-        });
-
-        const response = await schema.validate(user);
-
-        if (response.error) {
-
-            return response.error.message;
-
-        } else {
-
-            return false;
-        }
+        return false;
     }
 
 
 }
+
+const login = async(user) => {
+
+    const schema = Joi.object().keys({
+
+        email: Joi.string().min(6).required().email(),
+        password: Joi.string().min(6).required(),
+    });
+
+    const response = await schema.validate(user);
+
+    if (response.error) {
+
+        return response.error.message;
+
+    } else {
+
+        return false;
+    }
+}
+
+module.exports = { register, login }
