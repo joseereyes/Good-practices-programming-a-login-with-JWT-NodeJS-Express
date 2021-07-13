@@ -11,7 +11,7 @@ const createUser = async(user) => {
 
         const response = {
             message: "Email already exists",
-            status: 409
+            status: 200
         }
 
         return response;
@@ -30,8 +30,11 @@ const createUser = async(user) => {
 
         try {
 
-            const response = await post.save();
-            response.status = 201;
+            const result = await post.save();
+            const response = {
+                status: 201,
+                message: "Your account has been created successfully."
+            }
             return response;
 
         } catch (error) {
@@ -106,8 +109,8 @@ const login = async(user) => {
         } else {
 
             const response = {
-                status: 409,
-                message: "Password does not mach"
+                status: 401,
+                message: "Password does not match"
             }
             return response;
         }

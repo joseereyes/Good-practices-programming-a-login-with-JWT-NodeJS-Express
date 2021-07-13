@@ -36,7 +36,7 @@ const login = async(req, res) => {
 
     } else {
 
-        res.json(user);
+        res.status(user.status).json(user);
 
     }
 }
