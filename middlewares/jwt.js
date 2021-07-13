@@ -5,7 +5,13 @@ const createToken = async(req, res, object) => {
 
     const token = jwt.sign({ object }, process.env.TOKEN_SECRET_KEY, { expiresIn: "32m" });
     res.header("auth-token", token);
-    return token;
+
+    const response = {
+        status: 201,
+        token
+    }
+
+    return response;
 
 }
 
@@ -22,12 +28,13 @@ const validateToken = async(req, res, next) => {
             next();
 
         } catch (error) {
-            res.json(error);
+
+            res.status(401).json(error);
         }
 
     } else {
 
-        res.status(401).json({ Auth: "Token auth-token was not sent" });
+        res.status(401).json({ Auth: "Token was not sent" });
 
     }
 

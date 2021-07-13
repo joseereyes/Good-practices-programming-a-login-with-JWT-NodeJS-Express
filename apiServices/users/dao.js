@@ -9,7 +9,12 @@ const createUser = async(user) => {
 
     if (emailExists) {
 
-        return "Email already exists";
+        const response = {
+            message: "Email already exists",
+            status: 409
+        }
+
+        return response;
 
     } else {
 
@@ -26,10 +31,12 @@ const createUser = async(user) => {
         try {
 
             const response = await post.save();
+            response.status = 201;
             return response;
 
         } catch (error) {
 
+            error.status = 500;
             return error;
         }
 
@@ -41,11 +48,26 @@ const getUsers = async() => {
     try {
 
         const response = await userSchema.find();
-        return response;
+
+        if (response[0]) {
+
+            response.status = 200;
+            return response;
+
+        } else {
+
+            const response = {
+                status: 404,
+                message: "There are not users"
+            }
+
+            return response;
+        }
 
     } catch (error) {
 
-        return error;
+        error.status = 404;
+        error;
 
     }
 
@@ -54,10 +76,14 @@ const getUsers = async() => {
 const getUser = async(id) => {
 
     try {
+
         const response = await userSchema.findById({ _id: id });
+        response.status = 200;
         return response;
+
     } catch (error) {
 
+        error.status = 404;
         return error;
     }
 }
@@ -65,25 +91,34 @@ const getUser = async(id) => {
 const login = async(user) => {
 
     // true: return all the info asociated with the email, false: does not exist email.
-    const userFromDb = await userSchema.findOne({ email: user.email });
+    const userExists = await userSchema.findOne({ email: user.email });
 
-    if (userFromDb) {
+    if (userExists) {
 
         // now verify the password  true: password mach  false: password does not mach
-        const verifyPassword = await hash.validatePassword(user.password, userFromDb.password);
+        const verifyPassword = await hash.validatePassword(user.password, userExists.password);
 
         if (verifyPassword) {
 
-            return userFromDb;
+            userExists.status = 200;
+            return userExists;
 
         } else {
 
-            return "Password does not mach";
+            const response = {
+                status: 409,
+                message: "Password does not mach"
+            }
+            return response;
         }
 
     } else {
 
-        return "Email does not exists";
+        const response = {
+            status: 404,
+            message: "Email does not exists"
+        }
+        return response;
     }
 
 }

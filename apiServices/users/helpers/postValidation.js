@@ -12,11 +12,15 @@ const register = async(user) => {
 
     });
 
-    const response = await schema.validate(user);
+    const validation = await schema.validate(user);
 
-    if (response.error) {
+    if (validation.error) {
 
-        return response.error.message;
+        const response = {
+            status: 400,
+            message: validation.error.message
+        }
+        return response;
 
     } else {
 

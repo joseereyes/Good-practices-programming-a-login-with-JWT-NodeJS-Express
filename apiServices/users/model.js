@@ -11,6 +11,7 @@ const createUser = async(user) => {
         return postFieldsErr;
 
     } else {
+
         const response = await dao.createUser(user);
         return response;
     }

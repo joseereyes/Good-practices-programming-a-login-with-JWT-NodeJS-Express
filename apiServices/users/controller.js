@@ -5,13 +5,13 @@ const jwt = require("../../middlewares/jwt");
 const createUser = async(req, res) => {
 
     const response = await model.createUser(req.body);
-    res.json(response);
+    res.status(response.status).json(response);
 }
 
 const getUsers = async(req, res) => {
 
     const response = await model.getUsers();
-    res.json(response);
+    res.status(response.status).json(response);
 
 }
 
@@ -21,7 +21,7 @@ const getUser = async(req, res) => {
 
 
     const response = await model.getUser(id);
-    res.json(response);
+    res.status(response.status).json(response);
 
 }
 
@@ -31,8 +31,8 @@ const login = async(req, res) => {
 
     if (user._id) { //if user.id exists it means that DB found the user or password maches.
 
-        const response = await jwt.createToken(req, res, user);
-        res.json(response);
+        const response = await jwt.createToken(req, res, user); // here we create a token with user info and return it
+        res.status(response.status).json(response);
 
     } else {
 
