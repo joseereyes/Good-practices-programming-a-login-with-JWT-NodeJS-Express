@@ -17,7 +17,7 @@ const register = async(user) => {
     if (validation.error) {
 
         const response = {
-            status: 400,
+            status: 200,
             message: validation.error.message
         }
         return response;
