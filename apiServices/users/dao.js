@@ -1,6 +1,6 @@
 const userSchema = require("./schema");
 const hash = require("./helpers/hash");
-
+const dto = require("./dto");
 
 const createUser = async(user) => {
 
@@ -10,8 +10,9 @@ const createUser = async(user) => {
     if (emailExists) {
 
         const response = {
-            message: "Email already exists",
-            status: 200
+
+            status: 200,
+            data: "Email already exists"
         }
 
         return response;
@@ -33,14 +34,17 @@ const createUser = async(user) => {
             const result = await post.save();
             const response = {
                 status: 201,
-                message: "Your account has been created successfully."
+                data: "Your account has been created successfully."
             }
             return response;
 
         } catch (error) {
 
-            error.status = 500;
-            return error;
+            const response = {
+                status: 500,
+                data: error
+            }
+            return response;
         }
 
     }
@@ -50,18 +54,23 @@ const getUsers = async() => {
 
     try {
 
-        const response = await userSchema.find();
+        const usersFromDB = await userSchema.find();
 
-        if (response[0]) {
+        if (usersFromDB[0]) {
 
-            response.status = 200;
+            const users = dto.getUsers(usersFromDB);
+
+            const response = {
+                status: 200,
+                data: users
+            }
             return response;
 
         } else {
 
             const response = {
                 status: 404,
-                message: "There are not users"
+                data: "There are not users"
             }
 
             return response;
@@ -69,8 +78,10 @@ const getUsers = async() => {
 
     } catch (error) {
 
-        error.status = 404;
-        error;
+        response = {
+            status: 404,
+            data: error
+        }
 
     }
 
@@ -80,14 +91,22 @@ const getUser = async(id) => {
 
     try {
 
-        const response = await userSchema.findById({ _id: id });
-        response.status = 200;
+        const userFromDB = await userSchema.findById({ _id: id });
+        user = dto.getUser(userFromDB);
+
+        const response = {
+            status: 200,
+            data: user
+        }
         return response;
 
     } catch (error) {
 
-        error.status = 404;
-        return error;
+        const response = {
+            status: 404,
+            data: "No found the: " + error.stringValue
+        }
+        return response;
     }
 }
 
@@ -103,14 +122,19 @@ const login = async(user) => {
 
         if (verifyPassword) {
 
-            userExists.status = 200;
-            return userExists;
+            user = dto.getUser(userExists);
+
+            const response = {
+                status: 200,
+                data: user
+            }
+            return response;
 
         } else {
 
             const response = {
                 status: 401,
-                message: "Password does not match"
+                data: "Password does not match"
             }
             return response;
         }
@@ -119,7 +143,7 @@ const login = async(user) => {
 
         const response = {
             status: 404,
-            message: "Email does not exists"
+            data: "Email does not exists"
         }
         return response;
     }

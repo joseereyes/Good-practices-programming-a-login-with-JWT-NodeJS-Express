@@ -48,6 +48,4 @@ const login = async(user) => {
 
 }
 
-
-
 module.exports = { createUser, getUsers, getUser, login }

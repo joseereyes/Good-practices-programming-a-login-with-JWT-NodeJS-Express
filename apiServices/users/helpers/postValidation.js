@@ -18,15 +18,13 @@ const register = async(user) => {
 
         const response = {
             status: 200,
-            message: validation.error.message
+            data: validation.error.message
         }
         return response;
 
     } else {
-
         return false;
     }
-
 
 }
 
@@ -42,7 +40,12 @@ const login = async(user) => {
 
     if (response.error) {
 
-        return response.error.message;
+        const error = {
+            status: 401,
+            data: response.error.message
+        }
+
+        return error;
 
     } else {
 
